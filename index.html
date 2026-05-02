@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generator Pengurus HIMARPL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: #ffffff;
+        color: #111111;
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+      }
+      .app-container {
+        width: 100%;
+        max-width: 480px;
+      }
+      h2 {
+        font-weight: 600;
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        letter-spacing: -0.5px;
+        border-bottom: 2px solid #111111;
+        padding-bottom: 12px;
+        display: inline-block;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 24px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        color: #333;
+      }
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #fafafa;
+        font-family: inherit;
+        font-size: 1rem;
+        color: #111;
+        transition:
+          border-color 0.2s ease,
+          background-color 0.2s ease;
+        box-sizing: border-box;
+      }
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #111111;
+        background-color: #ffffff;
+      }
+      .live-warning {
+        color: #d93025;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 8px;
+        display: none;
+      }
+      .input-error {
+        border-color: #d93025 !important;
+        background-color: #fce8e6 !important;
+      }
+
+      button.btn-utama {
+        width: 100%;
+        padding: 16px;
+        background-color: #111111;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.1s ease,
+          background-color 0.2s ease,
+          opacity 0.2s;
+        margin-top: 10px;
+      }
+      button.btn-utama:hover:not(:disabled) {
+        background-color: #333333;
+      }
+      button.btn-utama:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      /* Style saat tombol dikunci */
+      button.btn-utama:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      .result-box {
+        margin-top: 40px;
+        display: none;
+        border-top: 1px solid #e0e0e0;
+        padding-top: 24px;
+      }
+      .stats-badge {
+        font-size: 0.9rem;
+        color: #666666;
+        margin-bottom: 20px;
+        font-weight: 300;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      li {
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background-color: #ffffff;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        transition: border-color 0.2s ease;
+      }
+      li:hover {
+        border-color: #111111;
+      }
+      li::before {
+        content: attr(data-index) ". ";
+        font-weight: 600;
+        color: #999999;
+        margin-right: 8px;
+      }
+      strong {
+        font-weight: 600;
+        color: #111111;
+      }
+
+      .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px dashed #e0e0e0;
+      }
+      .pagination-container button {
+        padding: 10px 16px;
+        background-color: transparent;
+        border: 1px solid #111111;
+        border-radius: 6px;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .pagination-container button:hover:not(:disabled) {
+        background-color: #f5f5f5;
+      }
+      .pagination-container button:disabled {
+        border-color: #e0e0e0;
+        color: #cccccc;
+        cursor: not-allowed;
+      }
+      .page-info {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #666666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <h2>Pemilihan Susunan Pengurus HIMARPL</h2>
+
+      <div class="form-group">
+        <label>Daftar Kandidat Maksimal 10 (Pisah dengan koma)</label>
+        <input
+          type="text"
+          id="kandidat"
+          value="Akbar, Danish, Fadhil, Mira, Tsabitah"
+          placeholder="Ketik nama..."
+          oninput="cekLiveKandidat()"
+        />
+        <div id="pesanWarning" class="live-warning">
+          Maksimal 10 kandidat! Silakan hapus beberapa nama.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Alokasi Posisi</label>
+        <select id="posisi">
+          <option value="2">2 Posisi (Ketua, Wakil)</option>
+          <option value="3" selected>
+            3 Posisi (Ketua, Wakil, Sekretaris)
+          </option>
+          <option value="4">4 Posisi (Ketua, Wakil, Sek, Bendum)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Filter Spesifik (Opsional)</label>
+        <input
+          type="text"
+          id="filterKetua"
+          placeholder="Nama yang WAJIB jadi Ketua..."
+        />
+      </div>
+
+      <button id="btnGenerate" class="btn-utama" onclick="mulaiProses()">
+        Generate Susunan
+      </button>
+
+      <div id="areaHasil" class="result-box">
+        <div id="pesanStatistik" class="stats-badge"></div>
+        <ul id="daftarSusunan"></ul>
+
+        <div class="pagination-container" id="kontrolPaginasi">
+          <button id="btnPrev" onclick="ubahHalaman(-1)">Sebelumnya</button>
+          <span class="page-info" id="infoHalaman">Halaman 1 dari 1</span>
+          <button id="btnNext" onclick="ubahHalaman(1)">Selanjutnya</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let dataPermutasi = [];
+      let halamanSaatIni = 1;
+      const DATA_PER_HALAMAN = 10;
+
+      function cekLiveKandidat() {
+        const inputElemen = document.getElementById("kandidat");
+        const warningElemen = document.getElementById("pesanWarning");
+        const btnGenerate = document.getElementById("btnGenerate");
+
+        const jumlahKandidat = inputElemen.value
+          .split(",")
+          .map((n) => n.trim())
+          .filter((n) => n !== "").length;
+
+        if (jumlahKandidat > 10) {
+          inputElemen.classList.add("input-error");
+          warningElemen.style.display = "block";
+          btnGenerate.disabled = true;
+        } else {
+          inputElemen.classList.remove("input-error");
+          warningElemen.style.display = "none";
+          btnGenerate.disabled = false;
+        }
+      }
+
+      function mulaiProses() {
+        const inputKandidat = document.getElementById("kandidat").value;
+        const jumlahPosisi = parseInt(document.getElementById("posisi").value);
+        const filterKetua = document
+          .getElementById("filterKetua")
+          .value.trim()
+          .toLowerCase();
+
+        const kandidatArray = inputKandidat
+          .split(",")
+          .map((n) => n.trim())
+          .filter((n) => n !== "");
+        const n = kandidatArray.length;
+        const r = jumlahPosisi;
+
+        if (n === 0 || r > n) {
+          alert("Jumlah kandidat tidak boleh kurang dari jumlah posisi.");
+          return;
+        }
+
+        dataPermutasi = [];
+        halamanSaatIni = 1;
+
+        function cariKombinasi(saatIni, sisa) {
+          if (filterKetua !== "" && saatIni.length === 1) {
+            if (saatIni[0].toLowerCase() !== filterKetua) return;
+          }
+
+          if (saatIni.length === r) {
+            dataPermutasi.push(saatIni);
+            return;
+          }
+          for (let i = 0; i < sisa.length; i++) {
+            let selanjutnya = saatIni.concat(sisa[i]);
+            let sisaSelanjutnya = sisa.slice(0, i).concat(sisa.slice(i + 1));
+            cariKombinasi(selanjutnya, sisaSelanjutnya);
+          }
+        }
+
+        document.getElementById("pesanStatistik").innerHTML =
+          "Mengkalkulasi permutasi...";
+        document.getElementById("areaHasil").style.display = "block";
+
+        setTimeout(() => {
+          cariKombinasi([], kandidatArray);
+
+          if (dataPermutasi.length === 0) {
+            document.getElementById("pesanStatistik").innerHTML =
+              "Tidak ada kombinasi yang cocok dengan filter.";
+            document.getElementById("daftarSusunan").innerHTML = "";
+            document.getElementById("kontrolPaginasi").style.display = "none";
+            return;
+          }
+
+          document.getElementById("kontrolPaginasi").style.display = "flex";
+          renderHalaman();
+        }, 50);
+      }
+
+      function renderHalaman() {
+        const daftarHTML = document.getElementById("daftarSusunan");
+        const jabatan = ["Ketua", "Wakil", "Sekretaris", "Bendahara"];
+
+        const totalHalaman = Math.ceil(dataPermutasi.length / DATA_PER_HALAMAN);
+        const indeksMulai = (halamanSaatIni - 1) * DATA_PER_HALAMAN;
+        const indeksSelesai = indeksMulai + DATA_PER_HALAMAN;
+
+        const potonganData = dataPermutasi.slice(indeksMulai, indeksSelesai);
+
+        daftarHTML.innerHTML = "";
+
+        potonganData.forEach((susunan, index) => {
+          let teks = "";
+          for (let i = 0; i < susunan.length; i++) {
+            teks += `<strong>${susunan[i]}</strong> (${jabatan[i]})`;
+            if (i < susunan.length - 1) teks += " &mdash; ";
+          }
+
+          const li = document.createElement("li");
+          const nomorUrut = indeksMulai + index + 1;
+          li.setAttribute("data-index", nomorUrut);
+          li.innerHTML = teks;
+          daftarHTML.appendChild(li);
+        });
+
+        document.getElementById("pesanStatistik").innerHTML =
+          `Total ditemukan: <strong>${dataPermutasi.length}</strong> kemungkinan susunan.`;
+        document.getElementById("infoHalaman").innerText =
+          `Halaman ${halamanSaatIni} dari ${totalHalaman}`;
+
+        document.getElementById("btnPrev").disabled = halamanSaatIni === 1;
+        document.getElementById("btnNext").disabled =
+          halamanSaatIni === totalHalaman;
+      }
+
+      function ubahHalaman(arah) {
+        halamanSaatIni += arah;
+        renderHalaman();
+      }
+    </script>
+  </body>
+</html>
